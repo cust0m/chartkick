@@ -486,7 +486,6 @@
     var minute = true;
 
     var series = chart.data;
-
     var max = 0;
     if (chartType === "bubble") {
       for (var i$1 = 0; i$1 < series.length; i$1++) {
@@ -760,6 +759,20 @@
 
   defaultExport.prototype.renderBarChart = function renderBarChart (chart) {
     this.renderColumnChart(chart, "bar");
+  };
+
+  defaultExport.prototype.renderRadarChart = function renderRadarChart (chart) {
+    var options = jsOptions(chart, chart.options);
+    var data = createDataTable(chart, options, "radar");
+    data.labels = chart.rawData.labels
+    data.datasets = []
+
+    var i;
+    for(i = 0; i < chart.rawData.data.length; i++){
+      data.datasets.push({data: chart.rawData.data[i]})
+    }
+
+    this.drawChart(chart, "radar", data, options);
   };
 
   defaultExport.prototype.renderScatterChart = function renderScatterChart (chart, chartType) {
@@ -2068,6 +2081,27 @@
     return BarChart;
   }(Chart));
 
+  var RadarChart = (function (Chart) {
+    function RadarChart () {
+      Chart.apply(this, arguments);
+    }
+
+    if ( Chart ) RadarChart.__proto__ = Chart;
+    RadarChart.prototype = Object.create( Chart && Chart.prototype );
+    RadarChart.prototype.constructor = RadarChart;
+
+    RadarChart.prototype.__processData = function __processData () {
+      return processSeries(this, null, true);
+    };
+
+    RadarChart.prototype.__chartName = function __chartName () {
+      return "RadarChart";
+    };
+
+    return RadarChart;
+  }(Chart));
+
+
   var AreaChart = (function (Chart) {
     function AreaChart () {
       Chart.apply(this, arguments);
@@ -2178,6 +2212,7 @@
     PieChart: PieChart,
     ColumnChart: ColumnChart,
     BarChart: BarChart,
+    RadarChart: RadarChart,
     AreaChart: AreaChart,
     GeoChart: GeoChart,
     ScatterChart: ScatterChart,

@@ -19,6 +19,10 @@ module Chartkick
       chartkick_chart "BarChart", data_source, options
     end
 
+    def radar_chart(data_source, **options)
+      chartkick_chart "RadarChart", data_source, options
+    end
+
     def area_chart(data_source, **options)
       chartkick_chart "AreaChart", data_source, options
     end
@@ -60,8 +64,7 @@ module Chartkick
       nonce_html = nonce ? " nonce=\"#{ERB::Util.html_escape(nonce)}\"" : nil
 
       html = (options.delete(:html) || %(<div id="%{id}" style="height: %{height}; width: %{width}; text-align: center; color: #999; line-height: %{height}; font-size: 14px; font-family: 'Lucida Grande', 'Lucida Sans Unicode', Verdana, Arial, Helvetica, sans-serif;">Loading...</div>)) % {id: ERB::Util.html_escape(element_id), height: ERB::Util.html_escape(height), width: ERB::Util.html_escape(width)}
-
-      createjs = "new Chartkick.#{klass}(#{element_id.to_json}, #{data_source.respond_to?(:chart_json) ? data_source.chart_json : data_source.to_json}, #{options.to_json});"
+      createjs = "new Chartkick.#{klass}(#{element_id.to_json}, #{data_source.respond_to?(:chart_json) && klass != "RadarChart" ? data_source.chart_json : data_source.to_json}, #{options.to_json});"
       if defer
         js = <<JS
 <script type="text/javascript"#{nonce_html}>
